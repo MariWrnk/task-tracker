@@ -1,13 +1,10 @@
 package mariwrnk.tasktracker.controller.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mariwrnk.tasktracker.dto.Project;
 import mariwrnk.tasktracker.dto.Task;
-import mariwrnk.tasktracker.dto.User;
 
 import java.util.Date;
 

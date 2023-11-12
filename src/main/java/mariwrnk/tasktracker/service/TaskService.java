@@ -5,6 +5,7 @@ import mariwrnk.tasktracker.dto.Project;
 import mariwrnk.tasktracker.dto.Task;
 import mariwrnk.tasktracker.dto.User;
 import mariwrnk.tasktracker.exception.TaskNotFoundException;
+import mariwrnk.tasktracker.exception.UserAndProjectMismatchException;
 import mariwrnk.tasktracker.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,12 @@ public class TaskService {
         }
 
         if (projectService.checkUserIsNotInProject(taskProject, taskCreator) || projectService.checkUserIsNotInProject(taskProject, taskExecutor)) {
-            userProjectMismatch();
+            throw new UserAndProjectMismatchException();
+        }
+
+        // если задача с переданным id уже существует, то генерируем новый
+        if(taskRepository.existsById(apiDto.getId())) {
+            apiDto.setId(null);
         }
 
         Task task = new Task(apiDto, taskProject, taskCreator, taskExecutor);
@@ -79,7 +85,7 @@ public class TaskService {
         User taskExecutor = userService.getUserIfExists(apiDto.getExecutorId());
 
         if (projectService.checkUserIsNotInProject(taskProject, taskCreator) || projectService.checkUserIsNotInProject(taskProject, taskExecutor)) {
-            userProjectMismatch();
+            throw new UserAndProjectMismatchException();
         }
 
         task.updateTaskParams(apiDto, taskProject, taskCreator, taskExecutor);
@@ -96,7 +102,7 @@ public class TaskService {
 
     public TaskApiDto endTask(Long userID, Long taskID, boolean isCompleted) {
         Task task = getTaskIfExists(taskID);
-        if(task.getTaskStart() == null || task.getExecutor().getId().equals(userID)) {
+        if (task.getTaskStart() == null || !task.getExecutor().getId().equals(userID)) {
             return null;
         }
         task.setTaskEnd(new Date());
@@ -133,10 +139,6 @@ public class TaskService {
             }
         }
         return task;
-    }
-
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "User is not in project")
-    private void userProjectMismatch() {
     }
 
     private List<TaskApiDto> convertToApiDtoList(List<Task> taskList) {

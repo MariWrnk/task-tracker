@@ -18,13 +18,13 @@ public class TaskController {
 
     @Operation(summary = "Get all tasks")
     @GetMapping("/tasks")
-    public ResponseEntity<List<TaskApiDto>> getAllUsers() {
+    public ResponseEntity<List<TaskApiDto>> getAllTasks() {
         return ResponseEntity.ok(taskService.findAll());
     }
 
     @Operation(summary = "Get all user tasks")
     @GetMapping("/{userID}/all-tasks")
-    public ResponseEntity<List<TaskApiDto>> getAllTasks(@PathVariable("userID") Long userID) {
+    public ResponseEntity<List<TaskApiDto>> getAllTasksByUser(@PathVariable("userID") Long userID) {
         return ResponseEntity.ok(taskService.findAllByUser(userID));
     }
 

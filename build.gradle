@@ -44,3 +44,7 @@ dependencies {
 	testImplementation 'com.h2database:h2:2.2.224'
 // 	testImplementation 'org.springframework.security:spring-security-test'
 }
+
+test {
+	useJUnitPlatform()
+}
